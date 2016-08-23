@@ -36,7 +36,7 @@ public class Member {
 	@Column(name = "ID")
 	private String id;			// 아이디
 	
-	@Column(name = "COLUMN")
+	@Column(name = "NAME")
 	private String username;	// 이름
 	
 	// 매핑정보가 없는 필드

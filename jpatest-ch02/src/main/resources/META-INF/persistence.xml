@@ -4,7 +4,7 @@
 	<persistence-unit name="jpabook">	<!-- 일반적으로 연결할 데이터베이스당 하나의 persistence-unit을 등록한다. -->
 		<properties>
 			<!-- 필수 속성 -->
-			<property name="javax.persistence.jdbc.driver" 		value="org.he.Driver"/>
+			<property name="javax.persistence.jdbc.driver" 		value="org.h2.Driver"/>
 			<property name="javax.persistence.jdbc.user" 		value="sa"/>
 			<property name="javax.persistence.jdbc.password" 	value=""/>
 			<property name="javax.persistence.jdbc.url" 		value="jdbc:h2:tcp://localhost/~/test"/>
