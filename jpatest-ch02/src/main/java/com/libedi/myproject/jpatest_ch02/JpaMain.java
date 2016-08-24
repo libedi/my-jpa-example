@@ -69,7 +69,9 @@ public class JpaMain {
 		/*
 		 *  목록 조회
 		 *  - JPQL (Java Persistence Query Language)
-		 *  - 엔티티 객체를 대상으로 쿼리한다. ("from Member" 에서 Member는 엔티티 객체이지 MEMBER 테이블이 아니다.)
+		 *  - 엔티티 객체를 대상으로 쿼리한다. 
+		 *  - "from Member" 에서 Member는 엔티티 객체이지 MEMBER 테이블이 아니다.
+		 *  - 따라서 JPQL은 데이터베이스 테이블을 전혀 알지 못한다.
 		 */
 		List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
 		System.out.println("members.size = " + members.size());
