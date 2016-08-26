@@ -24,7 +24,7 @@ public class JpaMain {
 		try{
 			tx.begin();		// 트랜잭션 시작
 			logic(em);		// 비즈니스 로직 실행
-			tx.commit();	// 트랜잭션 커밋
+			tx.commit();	// 트랜잭션 커밋 
 		} catch(Exception e){
 			tx.rollback();	// 트랜잭션 롤백
 		} finally{
@@ -35,7 +35,12 @@ public class JpaMain {
 	}
 
 	/*
-	 * 영속성 컨텍스트 설명
+	 * 영속성 컨텍스트
+	 * - 1차 캐시 : connection 연결 횟수가 줄어듦으로 성능상 이점을 누린다.
+	 * - 동일성 보장 : 1차 캐시를 통해 동일한 인스턴스 유지가 가능. 인스턴스간 == 비교 가능
+	 * - 트랜잭션을 지원하는 쓰기 지연
+	 * - 변경 감지
+	 * - 지연 로딩
 	 */
 	private static void logic(EntityManager em) {
 		String id = "id1";
@@ -54,12 +59,16 @@ public class JpaMain {
 		 * - 영속성 컨텍스트에 의해 엔티티가 관리되는 상태
 		 * - em.persist(), em.find(), JPQL
 		 */
+		// 1차 캐시에 저장됨
 		em.persist(member);
 		
 		// 수정
 		member.setAge(36);
 		
-		// 한건 조회
+		/*
+		 * 1차 캐시에서 조회
+		 * - 엔티티가 1차 캐시에 없으면 엔티티 매니저는 DB에서 조회해서 엔티티를 생성한다. 그리고 1차 캐시에 저장한 후에 영속 상태의 엔티티를 반환한다.
+		 */
 		Member findMember = em.find(Member.class, id);
 		System.out.println("findMember = " + findMember.getUsername() + ", age=" + findMember.getAge());
 		
