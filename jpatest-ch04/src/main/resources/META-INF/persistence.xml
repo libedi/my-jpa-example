@@ -15,6 +15,8 @@
 			<property name="hibernate.formate_sql" 					value="true"/>	<!-- 하이버네이트가 실행한 SQL 출력시 정렬 -->
 			<property name="hibernate.use_sql_comments" 			value="true"/>	<!-- 쿼리 출력시 주석도 함께 출력 -->
 			<property name="hibernate.id.new_generator_mappings" 	value="true"/>	<!-- JPA 표준에 맞게 새로운 키 생성 전략을 사용 -->
+			
+			<property name="hibernate.hbm2ddl.auto" 				value="create"/><!-- 스키마 자동생성 -->
 		</properties>
 	</persistence-unit>
 </persistence>
