@@ -11,16 +11,28 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="MEMBER")
+@Table(name="MEMBER",
+		/*
+		 * 유니크 제약조건 추가
+		 */
+		uniqueConstraints = {@UniqueConstraint(
+			name = "NAME_AGE_UNIQUE",
+			columnNames = {"NAME", "AGE"}
+		)})
 public class Member {
 
 	@Id
 	@Column(name="ID")
 	private String id;
 	
-	@Column(name="NAME")
+	/*
+	 * nullable = false : 자동 생성되는 DDL에 not null 제약 조건을 추가할 수 있다.
+	 * length : 자동 생성되는 DDL에 문자의 크기를 지정할 수 있다.
+	 */
+	@Column(name="NAME", nullable = false, length = 10)	// 제약조건 추가
 	private String username;
 	
 	private Integer age;
