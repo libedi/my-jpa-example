@@ -30,6 +30,7 @@ public class Member {
 	 * 기본 키 매핑
 	 * - 키 생성 전략을 사용하려면 persistence.xml 에
 	 * - hibernate.id.new_generator_mappings=true 속성을 반드시 추가해야 한다.
+	 * - @GeneratedValue : 자동 생성 전략을 사용하려면 추가한다.
 	 * 
 	 * 1. 기본 키 직접 할당 전략 : 기본 키를 애플리케이션에서 직접 할당
 	 * - @Id 로 매핑하면 된다.
@@ -39,6 +40,23 @@ public class Member {
 	 * - @GeneratedValue(strategy = GenerationType.IDENTITY) 어노테이션을 사용한다.
 	 * - em.persist() 호출해서 엔티티를 저장한 후에 식별자 값을 얻어온다.
 	 * - 엔티티가 영속상태가 되려면 식별자가 반드시 필요한데, INSERT 후에 얻을 수 있으므로, 트랜잭션을 지원하는 쓰기 지연은 동작하지 않는다.
+	 * 
+	 * 3. SEQUENCE 전략 : DB 시퀀스 오브젝트를 사용해서 기본 키를 생성.
+	 * - BoardSeq.java 파일 참조
+	 * 
+	 * 4. TABLE 전략 : 키 생성 전용 테이블을 하나 만들어 DB 시퀀스를 흉내내는 전략.
+	 * - BoardTable.java 파일 참조 
+	 * 
+	 * 5. AUTO 전략 : 선택한 데이터베이스 방언에 따라 전략을 자동으로 선택.
+	 * - @GeneratedValue.strategy 의 기본값이 AUTO 이므로, @GeneratedValue 로 사용해도 동일.
+	 * 
+	 * ** 정리 **
+	 * - 영속성 컨텍스트는 엔티티를 식별자 값으로 구분하므로, 엔티티를 영속상태로 만들려면 반드시 식별자 값이 있어야 함.
+	 * - 아래는 전략별로 em.persist() 호출 직후의 일들.
+	 * - 1. 직접 할당 : em.persist() 를 호출하기 전에 애플리케이션에서 직접 식별자 값을 할당. 식별자 값이 없으면 예외발생.
+	 * - 2. SEQUENCE : 데이터베이스 시퀀스에서 식별자 값을 획득한 후, 영속성 컨텍스트에 저장.
+	 * - 3. TABLE : 데이터베이스 시퀀스 생성용 테이블에서 식별자 값을 획득한 후, 영속성 컨텍스트에 저장.
+	 * - 4. IDENTITY : 데이터베이스에 엔티티를 저장해서 식별자 값을 획득한 후, 영속성 컨텍스트에 저장.
 	 */
 	@Id
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
