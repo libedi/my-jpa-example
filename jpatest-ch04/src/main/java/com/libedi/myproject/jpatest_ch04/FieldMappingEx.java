@@ -2,6 +2,8 @@ package com.libedi.myproject.jpatest_ch04;
 
 import java.util.Date;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 public class FieldMappingEx {
@@ -42,44 +45,56 @@ public class FieldMappingEx {
 	private RoleType roleType;
 	
 	/*
-	 * 3. @Temporal : 
+	 * 3. @Temporal : 날짜 타입을 매핑할 때 사용. (Date, Calendar)
+	 * - value : Temporal.DATE - 날짜, 데이터베이스 date 타입과 매핑.(ex:2016-12-08)
+	 *         : Temporal.TIME - 시간, 데이터베이스 time 타입과 매핑.(ex:12:17:00)
+	 *         : Temporal.TIMESTAMP - 날짜와 시간, 데이터베이스 timestamp 타입과 매핑.(ex:2016-12-08 12:17:00)
 	 */
+	@Temporal(TemporalType.DATE)
+	private Date date;
+	@Temporal(TemporalType.TIME)
+	private Date time;
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private Date timestamp;
 	
+	/*
+	 * 4. @Lob : BLOB, CLOB 타입과 매핑.
+	 * - 지정할 수 있는 속성이 없다. 대신 자바 필드 타입이 문자면 CLOB, 나머지는 BLOB으로 매핑
+	 * - CLOB : String, char[], java.sql.CLOB
+	 * - BLOB : byte[], java.sql.BLOB
+	 */
 	@Lob
-	private String description;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public RoleType getRoleType() {
-		return roleType;
-	}
-
-	public void setRoleType(RoleType roleType) {
-		this.roleType = roleType;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	private String lobString;
+	@Lob
+	private byte[] lobByte;
+	
+	/*
+	 * 5. @Transient : 이 필드는 매핑하지 않는다.
+	 * - DB에 저장하지 않고, 조회하지도 않는다.
+	 * - 객체에 임시로 어떤 값을 보관하고 싶을 때 사용.
+	 */
+	@Transient
+	private Integer temp;
+	
+	/*
+	 * 6. Access : 엔티티 데이터에 접근하는 방식을 지정.
+	 * - 필드 접근 : AccessType.FIELD 로 지정. 필드에 직접 접근. private 이어도 접근 가능. @Id가 필드에 있으면 생략가능.
+	 * - 프로퍼티 접근 : AccessType.PROPERTY 로 지정. 접근자(getter)를 사용. @Id가 접근자에 있으면 생략가능.
+	 * - 필드와 프로퍼티 접근을 함께 사용 가능.
+	 */
+	@Entity
+	class Test2 {
+		@Id
+		private String id;	// 필드 접근방식
+		@Transient
+		private String firstName;
+		@Transient
+		private String lastName;
+		
+		@Access(AccessType.PROPERTY)	// 프로퍼티 접근방식
+		public String getFullName(){
+			return firstName + lastName;
+		}
 	}
 	
 }
