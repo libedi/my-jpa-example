@@ -26,6 +26,14 @@ public class Member {
 	
 	private String username;
 	
+	public Member() {
+	}
+	
+	public Member(String id, String username) {
+		this.id = id;
+		this.username = username;
+	}
+	
 	/*
 	 * 연관관계 매핑 : 객체 연관관계와 테이블 연관관계를 매핑
 	 * - @ManyToOne : 다대일 관계 매핑정보. 연관관계 매핑에서 다중성을 나타내는 어노테이션은 필수.
