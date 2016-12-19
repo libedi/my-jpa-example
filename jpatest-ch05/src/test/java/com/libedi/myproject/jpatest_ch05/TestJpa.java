@@ -129,7 +129,7 @@ public class TestJpa {
 	 * 연관된 엔티티 삭제
 	 * @throws Exception
 	 */
-	@Test
+//	@Test
 	public void testDeleteRelationEntity() throws Exception{
 		Team team1 = em.find(Team.class, "team1");
 		Member member1 = em.find(Member.class, "member1");
@@ -141,6 +141,14 @@ public class TestJpa {
 		 * 연관된 엔티티를 삭제하려면, 기존에 있던 연관관계를 먼저 제거하고 삭제해야 한다.
 		 * 그렇지 않으면, 외래키 제약조건으로 DB 오류가 발생.
 		 */
+	}
+	
+	@Test
+	public void testBiDirection() throws Exception{
+		Team team = em.find(Team.class, "team1");
+		List<Member> members = team.getMembers();	// 팀 -> 회원. 객체 그래프 탐색
+		
+		members.stream().forEach(m -> System.out.println("member.username = " + m.getUsername()));
 	}
 	
 }
