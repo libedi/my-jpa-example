@@ -143,12 +143,114 @@ public class TestJpa {
 		 */
 	}
 	
-	@Test
+	/**
+	 * ex>5.12 : 일대다 방향으로 객체 그래프 탐색
+	 * @throws Exception
+	 */
+//	@Test
 	public void testBiDirection() throws Exception{
 		Team team = em.find(Team.class, "team1");
 		List<Member> members = team.getMembers();	// 팀 -> 회원. 객체 그래프 탐색
 		
 		members.stream().forEach(m -> System.out.println("member.username = " + m.getUsername()));
+	}
+	
+	/**
+	 * ex>5.13 : 양방향 연관관계 저장
+	 * @throws Exception
+	 */
+//	@Test
+	public void testSaveBiDirection() throws Exception{
+		// 팀1 저장
+		Team team1 = new Team("team1", "팀1");
+		em.persist(team1);
+		
+		/*
+		 * 연관관계의 주인인 엔티티에 연관관계 설정을 한다.
+		 */
+		// 회원1 저장
+		Member member1 = new Member("member1", "회원1");
+		member1.setTeam(team1);	// 연관관계 설정 : member1 -> team1
+		em.persist(member1);
+		
+		// 회원2 저장
+		Member member2 = new Member("member2", "회원2");
+		member2.setTeam(team1);	// 연관관계 설정 : member2 -> team1
+		em.persist(member2);
+		
+		// But, 객체 상태에서 완전한 양방향이라고 할 수 있을까? -> team1 size : 0
+		System.out.println("team1 size : " + team1.getMembers().size());
+	}
+	
+	/**
+	 * ex>5.14 : 양방향 연관관계 주의점
+	 * @throws Exception
+	 */
+//	@Test
+	public void testSaveNonOwner() throws Exception{
+		// 회원1 저장
+		Member member1 = new Member("member1", "회원1");
+		em.persist(member1);
+		
+		// 회원2 저장
+		Member member2 = new Member("member2", "회원2");
+		em.persist(member2);
+		
+		Team team1 = new Team("team1", "팀1");
+		/*
+		 * 주인이 아닌 곳만 연관관계 설정
+		 * - 연관관계의 주인만이 외래키 값을 변경할 수 있다!!!
+		 * - 따라서 아래 코드는 MEMBER 테이블에 아무런 영향을 끼치지 않는다!
+		 */
+		team1.getMembers().add(member1);	// 아무런 SQL도 실행안됨
+		team1.getMembers().add(member2);	// 아무런 SQL도 실행안됨
+		em.persist(team1);
+	}
+
+	/**
+	 * ex>5.15 : 순수한 객체 연관관계
+	 * @throws Exception
+	 */
+	@Test
+	public void test순수한객체_양방향() throws Exception{
+		// 팀1
+		Team team1 = new Team("team1", "팀1");
+		Member member1 = new Member("member1", "회원1");
+		Member member2 = new Member("member2", "회원2");
+		
+		member1.setTeam(team1);	// 연관관계 설정 : member1 -> team1
+		member2.setTeam(team1);	// 연관관계 설정 : member2 -> team1
+		
+		System.out.println("members.size = " + team1.getMembers().size());
+	}
+	
+	/**
+	 * ex>5.17 : JPA로 양방향 모두 관계설정 코드 완성
+	 */
+	@Test
+	public void testORM_bidirection(){
+		// 팀1 저장
+		Team team1 = new Team("team1", "팀1");
+		em.persist(team1);
+		
+		Member member1 = new Member("member1", "회원1");
+		// 양방향 연관관계 설정
+		member1.setTeam(team1);				// 연관관계 설정 : member1 -> team1
+		team1.getMembers().add(member1);	// 연관관계 설정 : team1 -> member1
+		em.persist(member1);
+		
+		Member member2 = new Member("member2", "회원2");
+		// 양방향 연관관계 설정
+		member2.setTeam(team1);				// 연관관계 설정 : member2 -> team1
+		team1.getMembers().add(member2);	// 연관관계 설정 : team1 -> member2
+		em.persist(member2);
+		
+		/*
+		 * Member.team : 연관관계 주인. 이 값으로 외래키를 관리한다.
+		 * Team.members : 연관관계의 주인이 아니다. 따라서 저장 시에 사용되지 않는다.
+		 * 
+		 * 결론 : 객체의 양방향 연관관계는 양쪽 모두 관계를 맺어주자!
+		 */
 	}
 	
 }
