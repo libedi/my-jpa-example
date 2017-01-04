@@ -83,7 +83,17 @@ public class Member {
 		return team;
 	}
 	public void setTeam(Team team) {
+		// 기존 팀과 관계를 제거
+		if(this.team != null){
+			this.team.getMembers().remove(this);
+		}
 		this.team = team;
+		/*
+		 * 양방향 연관관계 설정시 양쪽 모두 신경써야 하므로,
+		 * 양쪽 모두 관계를 맺어주는 것을 편리하게 하기 위해,
+		 * 아래 코드를 추가한다.
+		 */
+		team.getMembers().add(this);
 	}
 	
 }

@@ -211,7 +211,7 @@ public class TestJpa {
 	 * ex>5.15 : 순수한 객체 연관관계
 	 * @throws Exception
 	 */
-	@Test
+//	@Test
 	public void test순수한객체_양방향() throws Exception{
 		// 팀1
 		Team team1 = new Team("team1", "팀1");
@@ -227,7 +227,7 @@ public class TestJpa {
 	/**
 	 * ex>5.17 : JPA로 양방향 모두 관계설정 코드 완성
 	 */
-	@Test
+//	@Test
 	public void testORM_bidirection(){
 		// 팀1 저장
 		Team team1 = new Team("team1", "팀1");
@@ -251,6 +251,23 @@ public class TestJpa {
 		 * 
 		 * 결론 : 객체의 양방향 연관관계는 양쪽 모두 관계를 맺어주자!
 		 */
+	}
+	
+	/**
+	 * ex>5.18 : 양방향 리팩토링 코드
+	 */
+	@Test
+	public void testORM_bidirection_refactoriong(){
+		Team team1 = new Team("team1", "팀1");
+		em.persist(team1);
+		
+		Member member1 = new Member("member1", "회원1");
+		member1.setTeam(team1);			// 양방향 설정
+		em.persist(member1);
+		
+		Member member2 = new Member("member2", "회원2");
+		member2.setTeam(team1);			// 양방향 설정
+		em.persist(member2);
 	}
 	
 }
