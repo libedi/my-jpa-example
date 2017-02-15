@@ -42,10 +42,13 @@ public class TestJpaCh06 {
 	 */
 	@Test
 	public void testOneToMany() throws Exception{
-		com.libedi.myproject.jpatest_ch06.one_to_many.Member member1 = new com.libedi.myproject.jpatest_ch06.one_to_many.Member();
-		com.libedi.myproject.jpatest_ch06.one_to_many.Member member2 = new com.libedi.myproject.jpatest_ch06.one_to_many.Member();
+		com.libedi.myproject.jpatest_ch06.one_to_many.Member member1 = 
+				new com.libedi.myproject.jpatest_ch06.one_to_many.Member();
+		com.libedi.myproject.jpatest_ch06.one_to_many.Member member2 = 
+				new com.libedi.myproject.jpatest_ch06.one_to_many.Member();
 		
-		com.libedi.myproject.jpatest_ch06.one_to_many.Team team1 = new com.libedi.myproject.jpatest_ch06.one_to_many.Team();
+		com.libedi.myproject.jpatest_ch06.one_to_many.Team team1 = 
+				new com.libedi.myproject.jpatest_ch06.one_to_many.Team();
 		team1.getMembers().add(member1);
 		team1.getMembers().add(member2);
 		
@@ -65,13 +68,15 @@ public class TestJpaCh06 {
 	 * @throws Exception
 	 */
 	@Test
-	public void testSaveManyToManySingleDir() throws Exception{
-		com.libedi.myproject.jpatest_ch06.many_to_many.Product productA = new com.libedi.myproject.jpatest_ch06.many_to_many.Product();
+	public void testManyToManySaveSingleDir() throws Exception{
+		com.libedi.myproject.jpatest_ch06.many_to_many.Product productA = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.Product();
 		productA.setId("ProductA");
 		productA.setName("상품A");
 		em.persist(productA);
 		
-		com.libedi.myproject.jpatest_ch06.many_to_many.Member member1 = new com.libedi.myproject.jpatest_ch06.many_to_many.Member();
+		com.libedi.myproject.jpatest_ch06.many_to_many.Member member1 = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.Member();
 		member1.setId("member1");
 		member1.setUsername("회원1");
 		member1.getProducts().add(productA);	// 연관관계 설정
@@ -83,11 +88,86 @@ public class TestJpaCh06 {
 	 * @throws Exception
 	 */
 	@Test
-	public void testFindManyToManySingleDir() throws Exception{
-		com.libedi.myproject.jpatest_ch06.many_to_many.Member member = em.find(com.libedi.myproject.jpatest_ch06.many_to_many.Member.class, "member1");
+	public void testManyToManyFindSingleDir() throws Exception{
+		com.libedi.myproject.jpatest_ch06.many_to_many.Member member = 
+				em.find(com.libedi.myproject.jpatest_ch06.many_to_many.Member.class, "member1");
 		List<com.libedi.myproject.jpatest_ch06.many_to_many.Product> products = member.getProducts();	// 객체 그래프 탐색
 		for(com.libedi.myproject.jpatest_ch06.many_to_many.Product product : products){
 			System.out.println("product.name = " + product.getName());
 		}
+	}
+	
+	/**
+	 * ex>6.18 - 다대다 양방향 역방향 탐색
+	 * @throws Exception
+	 */
+	@Test
+	public void testManyToManyFindDualInverse() throws Exception {
+		com.libedi.myproject.jpatest_ch06.many_to_many.Product product = 
+				em.find(com.libedi.myproject.jpatest_ch06.many_to_many.Product.class, "productA");
+		List<com.libedi.myproject.jpatest_ch06.many_to_many.Member> members = product.getMembers();
+		for(com.libedi.myproject.jpatest_ch06.many_to_many.Member member : members) {
+			System.out.println("member = " + member.getUsername());
+		}
+	}
+	/*
+	 * 다대다 매핑의 한계와 극복, 연결 엔티티 사용
+	 * - @ManyToMany를 사용하면 자동으로 매핑테이블을 처리해주므로 편리하다.
+	 * - 하지만 실무에서 사용하기에는 한계가 있다.
+	 * - 매핑테이블에 다른 컬럼들이 들어가면 (예를 들어 주문수량, 주문날짜 등) 해당 컬럼들을 매핑할 수 없기 떄문이다.
+	 * - 따라서 매핑 테이블에 대한 엔티티를 새로 생성하고 다대다을 매핑 테이블을 기준으로 일대다-다대일 관계로 변경해야 한다. 
+	 */
+	
+	/**
+	 * ex>6.23 - 개선된 다대다 (일래다 - 다대일로 변형) 를 저장
+	 * @throws Exception
+	 */
+	@Test
+	public void testManyToManyUpgrade1Save() throws Exception {
+		// 회원 저장
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.Member member1 = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.Member();
+		member1.setId("member1");
+		member1.setUsername("회원1");
+		em.persist(member1);
+		
+		// 상품 저장
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.Product productA = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.Product();
+		productA.setId("productA");
+		productA.setName("상품1");
+		em.persist(productA);
+		
+		// 회원상품 저장
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.MemberProduct memberProduct = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.MemberProduct();
+		memberProduct.setMember(member1);		// 주문 회원 - 연관관계 설정
+		memberProduct.setProduct(productA);		// 주문 상품 - 연관관계 설정
+		memberProduct.setOrderAmount(2);		// 주문 수량
+		em.persist(memberProduct);
+	}
+	
+	/**
+	 * ex>6.24 - 개선된 다대다 (일대다 - 다대일 변환) 을 조회
+	 * @throws Exception
+	 */
+	@Test
+	public void testManyToManyUpgrade1Find() throws Exception {
+		// 기본키 값 생성
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.MemberProductId memberProductId = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.MemberProductId();
+		memberProductId.setMember("member1");
+		memberProductId.setProduct("productA");
+		
+		// 식별자 클래스로 엔티티를 조회
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.MemberProduct memberProduct = 
+				em.find(com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.MemberProduct.class, memberProductId);
+		
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.Member member = memberProduct.getMember();
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade1.Product product = memberProduct.getProduct();
+		
+		System.out.println("member = " + member.getUsername());
+		System.out.println("product = " + product.getName());
+		System.out.println("orderAmount = " + memberProduct.getOrderAmount());
 	}
 }

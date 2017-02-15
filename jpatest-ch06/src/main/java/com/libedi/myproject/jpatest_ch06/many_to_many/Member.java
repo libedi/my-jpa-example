@@ -25,7 +25,7 @@ public class Member {
 			inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID")
 			)
 	private List<Product> products = new ArrayList<>();
-
+	
 	public String getId() {
 		return id;
 	}
@@ -43,6 +43,11 @@ public class Member {
 	}
 	public void setProducts(List<Product> products) {
 		this.products = products;
+	}
+	// 다대다 양방향을 위한 연관관계 편의 메서드
+	public void addProduct(Product product){
+		this.products.add(product);
+		product.getMembers().add(this);
 	}
 	
 }
