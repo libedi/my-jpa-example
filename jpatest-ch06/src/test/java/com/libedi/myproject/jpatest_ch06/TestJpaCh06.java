@@ -170,4 +170,51 @@ public class TestJpaCh06 {
 		System.out.println("product = " + product.getName());
 		System.out.println("orderAmount = " + memberProduct.getOrderAmount());
 	}
+	
+	/**
+	 * ex>6.27 - 추천하는 다대다 (새로운 기본키 생성전략) 저장
+	 * @throws Exception
+	 */
+	@Test
+	public void testManyToManyUpgrade2Save() throws Exception {
+		// 회원 저장
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Member member1 = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Member();
+		member1.setId("member1");
+		member1.setUsername("회원1");
+		em.persist(member1);
+		
+		// 상품 저장
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Product productA = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Product();
+		productA.setId("productA");
+		productA.setName("상품1");
+		em.persist(productA);
+		
+		// 주문 저장
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Order order = 
+				new com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Order();
+		order.setMember(member1);		// 주문 회원 - 연관관계 설정
+		order.setProduct(productA);		// 주문 상품 - 연관관계 설정
+		order.setOrderAmount(2);		// 주문 수량
+		em.persist(order);
+	}
+	
+	/**
+	 * ex>6.28 - 추천하는 다대다 (새로운 기본키 생성전략) 조회
+	 * @throws Exception
+	 */
+	@Test
+	public void testManyToManyUpgrade2Find() throws Exception {
+		Long orderId = 1L;
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Order order = 
+				em.find(com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Order.class, orderId);
+		
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Member member = order.getMember();
+		com.libedi.myproject.jpatest_ch06.many_to_many.upgrade2.Product product = order.getProduct();
+		
+		System.out.println("member = " + member.getUsername());
+		System.out.println("product = " + product.getName());
+		System.out.println("orderAmount = " + order.getOrderAmount());
+	}
 }
